@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>v1</title>
+    <link rel="stylesheet" href="/assets/css/global.css" defer />
+
+    <script src="/assets/js/video_overlay.js" defer></script>
+    <script src="/assets/js/modal.js" defer></script>
+    <script src="/assets/js/toggle_detection.js" defer></script>
+    <script src="/assets/js/settings.js" defer></script>
+    <script src="/assets/js/camera.js" defer></script>
+    <script src="/assets/js/log.js" defer></script>
+    <script src="/assets/js/export.js" defer></script>
+    <script src="/assets/js/calibration.js" defer></script>
+    <script src="/assets/js/reset_data.js" defer></script>
+    <script src="/assets/js/alert.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+      defer
+    ></script>
+    <script src="/assets/js/chart.js" defer></script>
+    <script src="/assets/js/process.js" defer></script>
+  </head>
+
+  <body>
+    <main class="app">
+      <div class="app-content">
+        <div class="fd-display">
+          <div class="layout-title">
+            <span>Monitor</span>
+          </div>
+          <div class="fd-video">
+            <video
+              id="camera_source"
+              class="camera-feed user-select-none"
+              autoplay
+              muted
+              playsinline
+            ></video>
+            <canvas id="landmark-overlay" aria-hidden="true"></canvas>
+
+            <div class="fd-alert-overlay user-select-none">
+              <div class="fd-alert-message hidden">
+                <span></span>
+              </div>
+            </div>
+
+            <div class="fd-overlay user-select-none">
+              <div class="fd-pill fd-overlay-top">
+                <div class="overlay-status-panel hidden"></div>
+              </div>
+
+              <div class="fd-pill fd-overlay-btm">
+                <div class="overlay-left-control"></div>
+                <div class="overlay-right-control">
+                  <button id="settings-btn">
+                    <div
+                      class="fullscreen-expand"
+                      data-url="/assets/icons/setting-01.svg"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                          stroke="white"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                          stroke="white"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </button>
+
+                  <button id="fullscreen-btn">
+                    <div
+                      class="fullscreen-expand"
+                      data-url="/assets/icons/expand.svg"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="white"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+                        <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+                        <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+                        <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+                      </svg>
+                    </div>
+
+                    <div
+                      class="fullscreen-minimize"
+                      data-url="/assets/icons/minimize.svg"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="white"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M8 3v5h-5"></path>
+                        <path d="M16 3v5h5"></path>
+                        <path d="M16 21v-5h5"></path>
+                        <path d="M8 21v-5h-5"></path>
+                      </svg>
+                    </div>
+                  </button>
+
+                  <div class="setting-overlay-modal" id="settings-modal">
+                    <div class="menu-view" id="view-main">
+                      <div
+                        class="setting-option disabled"
+                        onclick="switchSettingsView('o-2')"
+                      >
+                        <span>Advanced</span>
+                        <div
+                          class="menu-icon"
+                          data-url="/assets/icons/chevron-right.svg"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z"
+                              fill="white"
+                              transform="scale(-1 1) translate(-24 0)"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <div class="menu-divider"></div>
+
+                      <div class="hover-off setting-option">
+                        <span>Alert Message</span>
+
+                        <label class="t-switch">
+                          <input type="checkbox" id="alert-toggle" checked />
+                          <span class="t-slider"></span>
+                        </label>
+                      </div>
+
+                      <!-- <div class="hover-off setting-option">
+                        <span>Alert Sound</span>
+
+                        <label class="t-switch">
+                          <input type="checkbox" id="alert-sound-toggle" checked />
+                          <span class="t-slider"></span>
+                        </label>
+                      </div> -->
+                    </div>
+
+                    <div class="menu-view hidden" id="o-2">
+                      <div
+                        class="setting-option back-btn"
+                        onclick="switchSettingsView('view-main')"
+                      >
+                        <div
+                          class="menu-icon"
+                          data-url="/assets/icons/chevron-left.svg"
+                        ></div>
+                        <span>Back</span>
+                      </div>
+
+                      <div class="menu-divider"></div>
+
+                      <div class="setting-option">
+                        <span>Option 1</span>
+                      </div>
+                      <div class="setting-option">
+                        <span>Option 2</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fd-state user-select-none">
+            <div class="stat-item">
+              <span class="stat-label">FPS</span>
+              <span class="stat-value" id="fps-info">--</span>
+            </div>
+
+            <div class="stat-item">
+              <span class="stat-label">Latency</span>
+              <span class="stat-value" id="latency-info">--</span>
+            </div>
+
+            <div class="stat-item">
+              <span class="stat-label">Faces</span>
+              <span class="stat-value" id="faces-info">--</span>
+            </div>
+          </div>
+
+          <div class="fd-chart">
+            <div class="layout-title">
+              <span>Chart</span>
+            </div>
+
+            <div class="rt-chart-layout user-select-none">
+              <div class="rt-chart">
+                <span>EAR</span>
+                <canvas id="ear-chart"></canvas>
+              </div>
+              <div class="rt-chart">
+                <span>MAR</span>
+                <canvas id="mar-chart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="logs-panel">
+            <div class="fd-logs">
+              <div class="layout-title">
+                <span>Logs</span>
+              </div>
+              <div class="log-area">
+                <div class="log-scroll"></div>
+              </div>
+            </div>
+
+            <div class="fd-export">
+              <div class="layout-title">
+                <span>Export Data</span>
+              </div>
+              <button
+                type="button"
+                class="log-export-btn"
+                id="export-log-btn"
+                disabled
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 3V15"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M7 10L12 15L17 10"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M5 21H19"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+
+                <span>Download</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="fd-control">
+          <div class="layout-title">
+            <span>Dashboard</span>
+          </div>
+
+          <div class="control-panel">
+            <div id="fatigue-layout">
+              <div class="info-card info-card--summary">
+                <span class="info-title">狀態</span>
+                <h3 class="fatigue-status-safe" id="fatigue-status"></h3>
+              </div>
+
+              <div class="info-card info-card--summary">
+                <span class="info-title"> 疲勞率</span>
+                <h3 id="fatigue-score">N/A</h3>
+              </div>
+            </div>
+
+            <div class="info-card--calibration info-card">
+              <span class="info-title">校準</span>
+
+              <label
+                class="cali-baseline-option active user-select-none"
+                id="cali-default"
+              >
+                <div class="cali-option-top">
+                  <div class="cali-option-left">
+                    <input
+                      type="radio"
+                      name="cali-option"
+                      value="default"
+                      checked
+                      autocomplete="off"
+                    />
+                    <div class="cali-baseline-option-content">
+                      <span>Default</span>
+                      <span>使用系統預設值</span>
+                    </div>
+                  </div>
+
+                  <div class="cali-option-right">
+                    <svg
+                      class="cali-chevron"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M18 15L12 9L6 15"
+                        stroke="white"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="cali-option-expand">
+                  <div class="cali-expand-inner">
+                    <div class="cali-value-row">
+                      <span class="cali-value-label">EAR Threshold</span>
+                      <span class="cali-value-number" id="default-ear-threshold"
+                        >--</span
+                      >
+                    </div>
+
+                    <div class="cali-value-row">
+                      <span class="cali-value-label">MAR Threshold</span>
+                      <span class="cali-value-number" id="default-mar-threshold"
+                        >--</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </label>
+              <label
+                class="cali-baseline-option user-select-none"
+                id="cali-baseline"
+              >
+                <div class="cali-option-top">
+                  <div class="cali-option-left">
+                    <input
+                      type="radio"
+                      name="cali-option"
+                      value="baseline"
+                      autocomplete="off"
+                      disabled
+                    />
+                    <div class="cali-baseline-option-content">
+                      <span>Baseline</span>
+                      <span id="baseline-status-text">尚未校準</span>
+                    </div>
+                  </div>
+
+                  <div class="cali-option-right">
+                    <svg
+                      class="cali-chevron"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M18 15L12 9L6 15"
+                        stroke="white"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="cali-option-expand">
+                  <div class="cali-expand-inner">
+                    <div class="cali-value-row">
+                      <span class="cali-value-label">EAR Baseline</span>
+                      <span
+                        class="cali-value-number"
+                        id="baseline-ear-threshold-info"
+                        >--</span
+                      >
+                    </div>
+
+                    <div class="cali-value-row">
+                      <span class="cali-value-label">MAR Baseline</span>
+                      <span
+                        class="cali-value-number"
+                        id="baseline-mar-threshold-info"
+                        >--</span
+                      >
+                    </div>
+
+                    <button
+                      type="button"
+                      class="calibration-btn"
+                      id="start-calibration-btn"
+                    >
+                      開始校準
+                    </button>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="info-card">
+              <span class="info-title">Eye</span>
+              <button class="reset-data-btn" id="reset-e-data-btn">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 3a8.976 8.976 0 0 0-7.5 4.03V3H3v5.75C3 9.44 3.56 10 4.25 10H10V8.5H5.365c1.29-2.45 3.83-4 6.635-4 4.135 0 7.5 3.365 7.5 7.5s-3.365 7.5-7.5 7.5a7.507 7.507 0 0 1-7.245-5.56l-1.45.39A9.012 9.012 0 0 0 12 21c4.96 0 9-4.04 9-9s-4.04-9-9-9Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+              <div class="setting-option-state">
+                <strong>EAR (眼部縱横比)</strong>
+                <span id="ear-info">--</span>
+              </div>
+              <div class="setting-option-state">
+                <strong>Blink Times (眨眼次數)</strong>
+                <span id="blink-times-info">--</span>
+              </div>
+              <div class="setting-option-state">
+                <strong>Eye Closure Duration (闔眼持續時間)</strong>
+                <span id="eye-closure-dur-info">--</span>
+              </div>
+              <div class="setting-option-state">
+                <strong>PERCLOS (眼瞼閉合率)</strong>
+                <span id="perclos-info">--</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <span class="info-title">Mouth</span>
+              <button class="reset-data-btn" id="reset-m-data-btn">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 3a8.976 8.976 0 0 0-7.5 4.03V3H3v5.75C3 9.44 3.56 10 4.25 10H10V8.5H5.365c1.29-2.45 3.83-4 6.635-4 4.135 0 7.5 3.365 7.5 7.5s-3.365 7.5-7.5 7.5a7.507 7.507 0 0 1-7.245-5.56l-1.45.39A9.012 9.012 0 0 0 12 21c4.96 0 9-4.04 9-9s-4.04-9-9-9Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+              <div class="setting-option-state">
+                <strong>MAR (嘴部縱横比)</strong>
+                <span id="mar-info">--</span>
+              </div>
+              <div class="setting-option-state">
+                <strong>Yawn Count (打哈欠次數)</strong>
+                <span id="yawn-times-info">--</span>
+              </div>
+              <div class="setting-option-state">
+                <strong>Yawn Duration (打哈欠持續時間)</strong>
+                <span id="yawn-dur-info">--</span>
+              </div>
+            </div>
+
+            <div class="info-card disabled">
+              <span class="info-title">Head</span>
+              <div class="setting-option-state">
+                <strong>Pitch (頭部傾斜率)</strong>
+                <span id="pitch-info">--</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              id="toggle_detection_button"
+              class="toggle_detection_button user-select-none"
+            >
+              Start
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-footer user-select-none">
+        <div id="footer">Design by enn0521</div>
+      </div>
+    </main>
+  </body>
+</html>
